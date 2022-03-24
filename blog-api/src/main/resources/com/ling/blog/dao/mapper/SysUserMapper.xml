@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ling.blog.dao.mapper.SysUserMapper">
+    <!--SysUser findUserById(@Param("id") Long id);-->
+    <select id="findUserById" parameterType="long" resultType="com.ling.blog.dao.pojo.SysUser">
+        select * from ms_sys_user where id = #{id}
+    </select>
+
+    <!--SysUser findUserByAccount(@Param("account")String account);-->
+    <select id="findUserByAccount" parameterType="string" resultType="com.ling.blog.dao.pojo.SysUser">
+        select *from ms_sys_user where account = #{account}
+    </select>
+
+    <!--void addUser(SysUser sysUser);-->
+    <insert id="addUser">
+        insert into ms_sys_user
+            values (null,#{sysUser.account},#{sysUser.admin},#{sysUser.avatar},#{sysUser.createDate},
+                    #{sysUser.deleted},#{sysUser.email},#{sysUser.lastLogin},#{sysUser.mobilePhoneNumber},
+                    #{sysUser.nickname},#{sysUser.password},#{sysUser.salt},#{sysUser.status})
+    </insert>
+
+</mapper>
