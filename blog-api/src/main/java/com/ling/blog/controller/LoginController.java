@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/login")
 public class LoginController {
-    private final LoginService loginService;
+    private LoginService loginService;
 
     @Autowired
     public LoginController(LoginService loginService){

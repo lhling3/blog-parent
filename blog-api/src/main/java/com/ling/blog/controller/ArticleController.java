@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/articles")
 public class ArticleController {
 
-    private final ArticleService articleService;
+    private ArticleService articleService;
     @Autowired
     public ArticleController(ArticleService articleService){
         this.articleService  = articleService;

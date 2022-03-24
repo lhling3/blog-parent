@@ -25,15 +25,15 @@ import java.util.List;
 public class ArticleServiceImpl implements ArticleService {
     private final ArticleMapper articleMapper;
 
-    private final TagService tagService;
+    private TagService tagService;
 
-    private final SysUserService sysUserService;
+    private SysUserService sysUserService;
 
     private final ArticleBodyMapper articleBodyMapper;
 
-    private final CategoryService categoryService;
+    private CategoryService categoryService;
 
-    private final ThreadService threadService;
+    private ThreadService threadService;
     @Autowired
     public ArticleServiceImpl(ArticleMapper articleMapper,TagService tagService,
                               SysUserService sysUserService,ArticleBodyMapper articleBodyMapper,

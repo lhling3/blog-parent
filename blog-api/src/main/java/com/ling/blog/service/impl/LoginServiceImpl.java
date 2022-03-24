@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 public class LoginServiceImpl implements LoginService {
-    private final SysUserService sysUserService;
+    private SysUserService sysUserService;
 
-    private final RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     private static final String slat = "mszlu!@#";
 

@@ -1,28 +1,33 @@
 package com.ling.blog.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ling.blog.dao.mapper.SysUserMapper;
 import com.ling.blog.dao.pojo.SysUser;
 import com.ling.blog.service.LoginService;
 import com.ling.blog.service.SysUserService;
+import com.ling.blog.utils.JWTUtils;
 import com.ling.blog.vo.ErrorCode;
 import com.ling.blog.vo.LoginUserVo;
 import com.ling.blog.vo.Result;
 import com.ling.blog.vo.UserVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class SysUserServiceImpl implements SysUserService {
     private final SysUserMapper sysUserMapper;
 
-    private final LoginService loginService;
+    private RedisTemplate<String,String> redisTemplate;
 
     @Autowired
-    public SysUserServiceImpl(SysUserMapper sysUserMapper,LoginService loginService){
+    public SysUserServiceImpl(SysUserMapper sysUserMapper,RedisTemplate<String,String> redisTemplate){
         this.sysUserMapper = sysUserMapper;
-        this.loginService = loginService;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -53,15 +58,20 @@ public class SysUserServiceImpl implements SysUserService {
          * 2、如果校验失败，返回错误
          * 3、如果成功，返回对应结果 LoginUserVo
          */
-        SysUser sysUser = loginService.checkToken(token);
-        if(sysUser == null){
-            return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.TOKEN_ERROR.getMsg());
+        Map<String, Object> map = JWTUtils.checkToken(token);
+        if (map == null){
+            return Result.fail(ErrorCode.NO_LOGIN.getCode(),ErrorCode.NO_LOGIN.getMsg());
         }
+        String userJson = redisTemplate.opsForValue().get("TOKEN_" + token);
+        if (StringUtils.isBlank(userJson)){
+            return Result.fail(ErrorCode.NO_LOGIN.getCode(),ErrorCode.NO_LOGIN.getMsg());
+        }
+        SysUser sysUser = JSON.parseObject(userJson, SysUser.class);
         LoginUserVo loginUserVo = new LoginUserVo();
-        loginUserVo.setId(sysUser.getId());
-        loginUserVo.setNickname(sysUser.getNickname());
         loginUserVo.setAccount(sysUser.getAccount());
         loginUserVo.setAvatar(sysUser.getAvatar());
+        loginUserVo.setId(sysUser.getId());
+        loginUserVo.setNickname(sysUser.getNickname());
         return Result.success(loginUserVo);
     }
 

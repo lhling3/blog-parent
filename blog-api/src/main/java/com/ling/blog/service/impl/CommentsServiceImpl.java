@@ -20,7 +20,7 @@ import java.util.List;
 public class CommentsServiceImpl implements CommentsService {
     private final CommentMapper commentMapper;
 
-    private final SysUserService sysUserService;
+    private SysUserService sysUserService;
 
     @Autowired
     public CommentsServiceImpl(CommentMapper commentMapper,SysUserService sysUserService){

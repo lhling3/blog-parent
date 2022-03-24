@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/tags")
 public class TagsController {
-    private final TagService tagService;
+    private TagService tagService;
 
     @Autowired
     public TagsController(TagService tagService){

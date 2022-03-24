@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
-    private final LoginService loginService;
+    private LoginService loginService;
 
     @Autowired
     public LoginInterceptor(LoginService loginService){
