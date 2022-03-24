@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/register")
 public class RegisterController {
+    private final LoginService loginService;
+
     @Autowired
-    private LoginService loginService;
+    public RegisterController(LoginService loginService){
+        this.loginService = loginService;
+    }
     @PostMapping
     public Result register(@RequestBody LoginParam loginParam){
         //sso 单点登录，后期如果把登录注册功能提出去（单独的服务，可以提供独立接口的服务）

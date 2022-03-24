@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/articles")
 public class ArticleController {
+
+    private final ArticleService articleService;
     @Autowired
-    private ArticleService articleService;
+    public ArticleController(ArticleService articleService){
+        this.articleService  = articleService;
+    }
     /**
      * 首页文章列表
      * @param pageParams

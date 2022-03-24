@@ -21,12 +21,17 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 public class LoginServiceImpl implements LoginService {
-    @Autowired
-    private SysUserService sysUserService;
-    @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+    private final SysUserService sysUserService;
+
+    private final RedisTemplate<String,String> redisTemplate;
 
     private static final String slat = "mszlu!@#";
+
+    @Autowired
+    public LoginServiceImpl(SysUserService sysUserService,RedisTemplate<String,String> redisTemplate){
+        this.sysUserService = sysUserService;
+        this.redisTemplate = redisTemplate;
+    }
     @Override
     public Result login(LoginParam loginParam) {
         //1、检测参数是否合法

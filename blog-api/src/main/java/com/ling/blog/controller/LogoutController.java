@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/logout")
 public class LogoutController {
+    private final LoginService loginService;
+
     @Autowired
-    private LoginService loginService;
+    public LogoutController(LoginService loginService){
+        this.loginService = loginService;
+    }
 
     @GetMapping
     public Result logout(@RequestHeader("Authorization") String token){

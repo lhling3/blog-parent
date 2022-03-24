@@ -9,8 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMVCConfig implements WebMvcConfigurer {
+    private final LoginInterceptor loginInterceptor;
+
     @Autowired
-    private LoginInterceptor loginInterceptor;
+    public WebMVCConfig(LoginInterceptor loginInterceptor){
+        this.loginInterceptor = loginInterceptor;
+    }
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         //跨域配置，不同端口的访问

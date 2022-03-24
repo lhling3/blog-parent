@@ -15,10 +15,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SysUserServiceImpl implements SysUserService {
+    private final SysUserMapper sysUserMapper;
+
+    private final LoginService loginService;
+
     @Autowired
-    private SysUserMapper sysUserMapper;
-    @Autowired
-    private LoginService loginService;
+    public SysUserServiceImpl(SysUserMapper sysUserMapper,LoginService loginService){
+        this.sysUserMapper = sysUserMapper;
+        this.loginService = loginService;
+    }
 
     @Override
     public SysUser findUserById(Long id) {

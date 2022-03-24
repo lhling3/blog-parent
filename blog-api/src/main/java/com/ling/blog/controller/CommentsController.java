@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/comments")
 public class CommentsController {
+    private final CommentsService commentsService;
+
     @Autowired
-    private CommentsService commentsService;
+    public CommentsController(CommentsService commentsService){
+        this.commentsService = commentsService;
+    }
 
     @GetMapping("/article/{id}")
     public Result comments(@PathVariable("id") Long articleId){

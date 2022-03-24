@@ -23,18 +23,28 @@ import java.util.List;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
+    private final ArticleMapper articleMapper;
+
+    private final TagService tagService;
+
+    private final SysUserService sysUserService;
+
+    private final ArticleBodyMapper articleBodyMapper;
+
+    private final CategoryService categoryService;
+
+    private final ThreadService threadService;
     @Autowired
-    private ArticleMapper articleMapper;
-    @Autowired
-    private TagService tagService;
-    @Autowired
-    private SysUserService sysUserService;
-    @Autowired
-    private ArticleBodyMapper articleBodyMapper;
-    @Autowired
-    private CategoryService categoryService;
-    @Autowired
-    private ThreadService threadService;
+    public ArticleServiceImpl(ArticleMapper articleMapper,TagService tagService,
+                              SysUserService sysUserService,ArticleBodyMapper articleBodyMapper,
+                              CategoryService categoryService,ThreadService threadService){
+        this.articleMapper = articleMapper;
+        this.tagService = tagService;
+        this.sysUserService = sysUserService;
+        this.articleBodyMapper = articleBodyMapper;
+        this.categoryService = categoryService;
+        this.threadService = threadService;
+    }
 
     /**
      * 最热文章

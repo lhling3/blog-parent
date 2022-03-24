@@ -16,8 +16,12 @@ import java.util.List;
 
 @Service
 public class TagServiceImpl implements TagService {
+    private final TagMapper tagMapper;
+
     @Autowired
-    private TagMapper tagMapper;
+    public TagServiceImpl(TagMapper tagMapper){
+        this.tagMapper = tagMapper;
+    }
     @Override
     public List<TagVo> findTagsByArticleId(Long articleId) {
         //mybatis-plus无法进行多表查询

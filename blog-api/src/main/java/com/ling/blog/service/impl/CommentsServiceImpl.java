@@ -18,10 +18,15 @@ import java.util.List;
 
 @Service
 public class CommentsServiceImpl implements CommentsService {
+    private final CommentMapper commentMapper;
+
+    private final SysUserService sysUserService;
+
     @Autowired
-    private CommentMapper commentMapper;
-    @Autowired
-    private SysUserService sysUserService;
+    public CommentsServiceImpl(CommentMapper commentMapper,SysUserService sysUserService){
+        this.commentMapper = commentMapper;
+        this.sysUserService = sysUserService;
+    }
     /**
      * 根据文章id查询所有评论列表
      * @param articleId

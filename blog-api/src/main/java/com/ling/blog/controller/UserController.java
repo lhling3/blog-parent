@@ -11,8 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final SysUserService sysUserService;
+
     @Autowired
-    private SysUserService sysUserService;
+    public UserController(SysUserService sysUserService){
+        this.sysUserService = sysUserService;
+    }
 
     @GetMapping("/currentUser")
     public Result currentUser(@RequestHeader("Authorization") String token){
