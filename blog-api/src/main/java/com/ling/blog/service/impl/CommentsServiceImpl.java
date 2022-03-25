@@ -6,9 +6,11 @@ import com.ling.blog.dao.pojo.Comment;
 import com.ling.blog.dao.pojo.SysUser;
 import com.ling.blog.service.CommentsService;
 import com.ling.blog.service.SysUserService;
+import com.ling.blog.utils.UserThreadLocal;
 import com.ling.blog.vo.CommentVo;
 import com.ling.blog.vo.Result;
 import com.ling.blog.vo.UserVo;
+import com.ling.blog.vo.params.CommentParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,32 @@ public class CommentsServiceImpl implements CommentsService {
         List<Comment> commentList = commentMapper.selectList(queryWrapper);
         List<CommentVo> commentVoList = copyList(commentList);
         return Result.success(commentVoList);
+    }
+
+    /**
+     * 对文章进行评论
+     * @param commentParam
+     * @return
+     */
+    @Override
+    public Result commentTo(CommentParam commentParam) {
+        SysUser sysUser = UserThreadLocal.get();
+        Comment comment = new Comment();
+        comment.setArticleId(commentParam.getArticleId());
+        comment.setContent(commentParam.getContent());
+        comment.setAuthorId(sysUser.getId());
+        comment.setCreateDate(System.currentTimeMillis());
+        Long parent = commentParam.getParent();
+        if(parent == null || parent == 0){
+            comment.setLevel(1);
+        }else{
+            comment.setLevel(2);
+        }
+        comment.setParentId(parent==null? 0 : parent);
+        Long toUserId = commentParam.getToUserId();
+        comment.setToUid(toUserId==null? 0:toUserId);
+        this.commentMapper.insert(comment);
+        return Result.success(null);
     }
 
     private List<CommentVo> copyList(List<Comment> commentList) {

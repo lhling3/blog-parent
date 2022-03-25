@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public class CommentParam {
-    private long articleId;
+
+    private Long articleId;
+
     private String content;
-    private long parent;
-    private long toUserId;
+    private Long parent;
+    private Long toUserId;
 }

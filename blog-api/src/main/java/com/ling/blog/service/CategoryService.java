@@ -1,6 +1,7 @@
 package com.ling.blog.service;
 
 import com.ling.blog.vo.CategoryVo;
+import com.ling.blog.vo.Result;
 
 import java.util.List;
 
@@ -12,4 +13,10 @@ public interface CategoryService {
      * @return
      */
     CategoryVo findCategoryById(Long categoryId);
+
+    /**
+     * 列出所有文章分类
+     * @return
+     */
+    Result findAllCategory();
 }
