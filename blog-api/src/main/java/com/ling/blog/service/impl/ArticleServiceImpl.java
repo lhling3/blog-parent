@@ -5,13 +5,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ling.blog.dao.dos.Archives;
 import com.ling.blog.dao.mapper.ArticleBodyMapper;
 import com.ling.blog.dao.mapper.ArticleMapper;
+import com.ling.blog.dao.mapper.ArticleTagMapper;
 import com.ling.blog.dao.mapper.TagMapper;
-import com.ling.blog.dao.pojo.Article;
-import com.ling.blog.dao.pojo.ArticleBody;
+import com.ling.blog.dao.pojo.*;
 import com.ling.blog.service.*;
+import com.ling.blog.utils.UserThreadLocal;
 import com.ling.blog.vo.ArticleBodyVo;
 import com.ling.blog.vo.ArticleVo;
 import com.ling.blog.vo.Result;
+import com.ling.blog.vo.TagVo;
+import com.ling.blog.vo.params.ArticleParam;
 import com.ling.blog.vo.params.PageParams;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
@@ -34,16 +37,20 @@ public class ArticleServiceImpl implements ArticleService {
     private CategoryService categoryService;
 
     private ThreadService threadService;
+
+    private ArticleTagMapper articleTagMapper;
     @Autowired
     public ArticleServiceImpl(ArticleMapper articleMapper,TagService tagService,
                               SysUserService sysUserService,ArticleBodyMapper articleBodyMapper,
-                              CategoryService categoryService,ThreadService threadService){
+                              CategoryService categoryService,ThreadService threadService,
+                              ArticleTagMapper articleTagMapper){
         this.articleMapper = articleMapper;
         this.tagService = tagService;
         this.sysUserService = sysUserService;
         this.articleBodyMapper = articleBodyMapper;
         this.categoryService = categoryService;
         this.threadService = threadService;
+        this.articleTagMapper = articleTagMapper;
     }
 
     /**
@@ -107,6 +114,55 @@ public class ArticleServiceImpl implements ArticleService {
         //更新增加了此次接口的耗时，如更新出现问题，不能影响查看文章的操作
         //线程池，可以把更新操作扔到线程池中去执行，和主线程就不相关了
         threadService.updateArticleViewCount(articleMapper,article);
+        return Result.success(articleVo);
+    }
+
+    /**
+     * 发布文章
+     * @param articleParam
+     * @return
+     */
+    @Override
+    public Result publishArticle(ArticleParam articleParam) {
+        /**
+         * 1、发布文章，目的，构建Article对象
+         * 2、作者id，当前登录用户
+         * 3、标签 要将标签加入关联列表当中
+         */
+        SysUser sysUser = UserThreadLocal.get();
+
+        Article article = new Article();
+        article.setAuthorId(sysUser.getId());
+        article.setTitle(articleParam.getTitle());
+        article.setCreateDate(System.currentTimeMillis());
+        article.setCategoryId(articleParam.getCategory().getId());
+        article.setSummary(articleParam.getSummary());
+        article.setCommentCounts(0);
+        article.setViewCounts(0);
+        article.setWeight(Article.Article_Common);
+        article.setBodyId(-1L);
+        articleMapper.insert(article);
+
+        List<TagVo> tags = articleParam.getTags();
+        if(tags != null){
+            for (TagVo tag : tags) {
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setArticleId(article.getId());
+                articleTag.setTagId(tag.getId());
+                this.articleTagMapper.insert(articleTag);
+            }
+        }
+        ArticleBody articleBody = new ArticleBody();
+        articleBody.setContent(articleParam.getBody().getContent());
+        articleBody.setContentHtml(articleParam.getBody().getContentHtml());
+        articleBody.setArticleId(article.getId());
+        this.articleBodyMapper.insert(articleBody);
+
+        article.setBodyId(articleBody.getId());
+        articleMapper.updateById(article);
+        ArticleVo articleVo = new ArticleVo();
+        articleVo.setId(article.getId());
+        //也可用map进行返回，就没有精度损失了
         return Result.success(articleVo);
     }
 

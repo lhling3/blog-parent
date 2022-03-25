@@ -1,6 +1,7 @@
 package com.ling.blog.service;
 
 import com.ling.blog.vo.Result;
+import com.ling.blog.vo.params.ArticleParam;
 import com.ling.blog.vo.params.PageParams;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -38,4 +39,11 @@ public interface ArticleService {
      * @return
      */
     Result findArticleById(Long articleId);
+
+    /**
+     * 发布文章
+     * @param articleParam
+     * @return
+     */
+    Result publishArticle(ArticleParam articleParam);
 }
