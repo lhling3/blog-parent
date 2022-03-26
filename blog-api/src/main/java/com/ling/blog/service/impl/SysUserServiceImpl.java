@@ -70,7 +70,7 @@ public class SysUserServiceImpl implements SysUserService {
         LoginUserVo loginUserVo = new LoginUserVo();
         loginUserVo.setAccount(sysUser.getAccount());
         loginUserVo.setAvatar(sysUser.getAvatar());
-        loginUserVo.setId(sysUser.getId());
+        loginUserVo.setId(String.valueOf(sysUser.getId()));
         loginUserVo.setNickname(sysUser.getNickname());
         return Result.success(loginUserVo);
     }
@@ -108,7 +108,7 @@ public class SysUserServiceImpl implements SysUserService {
             sysUser.setAvatar("/static/img/logo.b3a48c0.png");
         }
         UserVo userVo = new UserVo();
-        userVo.setId(sysUser.getId());
+        userVo.setId(String.valueOf(sysUser.getId()));
         userVo.setNickname(sysUser.getNickname());
         userVo.setAvatar(sysUser.getAvatar());
         return userVo;

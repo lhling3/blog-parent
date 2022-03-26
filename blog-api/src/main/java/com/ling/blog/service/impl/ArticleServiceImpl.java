@@ -136,7 +136,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAuthorId(sysUser.getId());
         article.setTitle(articleParam.getTitle());
         article.setCreateDate(System.currentTimeMillis());
-        article.setCategoryId(articleParam.getCategory().getId());
+        article.setCategoryId(Long.parseLong(articleParam.getCategory().getId()));
         article.setSummary(articleParam.getSummary());
         article.setCommentCounts(0);
         article.setViewCounts(0);
@@ -149,7 +149,7 @@ public class ArticleServiceImpl implements ArticleService {
             for (TagVo tag : tags) {
                 ArticleTag articleTag = new ArticleTag();
                 articleTag.setArticleId(article.getId());
-                articleTag.setTagId(tag.getId());
+                articleTag.setTagId(Long.parseLong(tag.getId()));
                 this.articleTagMapper.insert(articleTag);
             }
         }
@@ -162,7 +162,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setBodyId(articleBody.getId());
         articleMapper.updateById(article);
         ArticleVo articleVo = new ArticleVo();
-        articleVo.setId(article.getId());
+        articleVo.setId(String.valueOf(article.getId()));
         //也可用map进行返回，就没有精度损失了
         return Result.success(articleVo);
     }
@@ -233,6 +233,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
     public ArticleVo copy(Article article,boolean isTag,boolean isAuthor,boolean isBody,boolean isCategory){
         ArticleVo articleVo = new ArticleVo();
+        articleVo.setId(String.valueOf(article.getId()));
         BeanUtils.copyProperties(article,articleVo);
         articleVo.setCreateDate(new DateTime(article.getCreateDate()).toString("yyyy-MM-dd HH:mm"));
         if(isTag){
