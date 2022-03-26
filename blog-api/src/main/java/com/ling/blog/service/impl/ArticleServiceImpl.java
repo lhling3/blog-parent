@@ -1,6 +1,7 @@
 package com.ling.blog.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ling.blog.dao.dos.Archives;
 import com.ling.blog.dao.mapper.ArticleBodyMapper;
@@ -38,7 +39,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     private ThreadService threadService;
 
-    private ArticleTagMapper articleTagMapper;
+    private final ArticleTagMapper articleTagMapper;
     @Autowired
     public ArticleServiceImpl(ArticleMapper articleMapper,TagService tagService,
                               SysUserService sysUserService,ArticleBodyMapper articleBodyMapper,
@@ -173,11 +174,39 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public Result listArticle(PageParams pageParams) {
-        /**
+        Page<Article> page = new Page<>(pageParams.getPage(),pageParams.getPageSize());
+        IPage<Article> articleIPage = articleMapper.listArticle(page,pageParams.getCategoryId(),
+                                        pageParams.getTagId(),pageParams.getYear(),
+                                        pageParams.getMonth());
+        List<Article> records = articleIPage.getRecords();
+        return  Result.success(copyList(records,true,true));
+    }
+    /*@Override
+    public Result listArticle(PageParams pageParams) {
+        *//**
          * 1、分页查询article数据库表
-         */
+         *//*
         Page<Article> page = new Page<>(pageParams.getPage(),pageParams.getPageSize());
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        if(pageParams.getCategoryId() != null){
+            queryWrapper.eq(Article::getCategoryId,pageParams.getCategoryId());
+        }
+        List<Long> articleIdList = new ArrayList<>();
+        if(pageParams.getTagId() != null){
+            //加入标签条件查询
+            //article中没有tag字段，因为一篇文章有多个标签
+            //article_tag表中有相对应关系 article_id : tag_id
+            LambdaQueryWrapper<ArticleTag> queryWrapper1 = new LambdaQueryWrapper<>();
+            queryWrapper1.eq(ArticleTag::getTagId,pageParams.getTagId());
+            List<ArticleTag> articleTags = articleTagMapper.selectList(queryWrapper1);
+            for (ArticleTag articleTag : articleTags) {
+                articleIdList.add(articleTag.getArticleId());
+            }
+            if(articleIdList.size() > 0){
+                //and id in()
+                queryWrapper.in(Article::getId,articleIdList);
+            }
+        }
         //是否置顶排序
         //再按创建时间排序
         queryWrapper.orderByDesc(Article::getWeight,Article::getCreateDate);
@@ -186,7 +215,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<ArticleVo> articleVoList = copyList(records,true,true);
         return Result.success(articleVoList);
 
-    }
+    }*/
 
     private List<ArticleVo> copyList(List<Article> records,boolean isTag,boolean isAuthor) {
         List<ArticleVo> articleVoList = new ArrayList<>();
